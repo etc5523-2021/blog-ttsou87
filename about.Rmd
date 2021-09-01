@@ -1,0 +1,9 @@
+---
+title: "About this blog"
+description: |
+  Welcome to my blog created for ETC5523 Communicating with Data. Here I will publish a series of blog posts analysing COVID-19 related data and more.
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
