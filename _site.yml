@@ -4,6 +4,7 @@ description: |
   ttso0004
 output_dir: "docs"
 navbar:
+  source_url: https://github.com/etc5523-2021/blog-ttsou87
   right:
     - text: "Home"
       href: index.html
