@@ -2,7 +2,7 @@ name: "blog-ttsou87"
 title: "ttso0004"
 description: |
   Tina's blog for ETC5523
-output_dir: "_site"
+output_dir: "docs"
 navbar:
   right:
     - text: "Home"
