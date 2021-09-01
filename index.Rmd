@@ -1,5 +1,17 @@
 ---
-title: "Tina's Blog Posts"
+title: "Tina's Blog for ETC5523"
+description: |
+  Welcome to the website.
 site: distill::distill_website
 listing: posts
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      message = FALSE)
+
+# Learn more about creating websites with Distill at:
+# https://rstudio.github.io/distill/website.html
+
+```
+

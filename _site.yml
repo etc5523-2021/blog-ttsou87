@@ -1,7 +1,7 @@
-name: "blog-ttsou87"
+name: "distillwebsite"
 title: "ttso0004"
 description: |
-  Tina's blog for ETC5523
+  ttso0004
 output_dir: "docs"
 navbar:
   right:
@@ -9,4 +9,5 @@ navbar:
       href: index.html
     - text: "About"
       href: about.html
+theme: themes.css
 output: distill::distill_article
