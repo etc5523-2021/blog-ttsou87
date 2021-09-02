@@ -11,4 +11,5 @@ navbar:
     - text: "About"
       href: about.html
 theme: themes.css
+repository_url: https://github.com/etc5523-2021/blog-ttsou87
 output: distill::distill_article

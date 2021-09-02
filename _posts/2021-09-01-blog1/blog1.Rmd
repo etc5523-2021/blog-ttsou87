@@ -12,6 +12,7 @@ categories:
 output:
   distill::distill_article:
     self_contained: false
+    toc: true
 bibliography: ../../references.bib
 ---
 
@@ -21,9 +22,11 @@ knitr::opts_chunk$set(echo = FALSE,
                       message = FALSE)
 
 ```
-
+## Introduction
 As we move towards the third quarter of 2021, many countries around the world have been accelerating their vaccination process. In this blog post, I will be giving an simple overview of the situation in Nigeria.
 
+
+## Data Description
 ```{r libraries}
 # load library
 library(tidyverse)
@@ -39,7 +42,7 @@ source<- read.csv(here::here("data","COVID-19 Vaccine Doses in HRP Countries - D
 vaccination <-readr::read_csv("https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.csv")
 ```
 
-```{r}
+```{r vaccination related}
 vaccine_source <- source %>% 
   filter(f == "Nigeria")
  

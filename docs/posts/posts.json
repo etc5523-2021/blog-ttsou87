@@ -15,9 +15,9 @@
       "Nigeria",
       "Vaccination"
     ],
-    "contents": "\nAs we move towards the third quarter of 2021, many countries around the world have been accelerating their vaccination process. In this blog post, I will be giving an simple overview of the situation in Nigeria.\n\n\n\n\n\n\n\n\n\n\n\n\n",
+    "contents": "\n\nContents\nIntroduction\nData Description\n\nIntroduction\nAs we move towards the third quarter of 2021, many countries around the world have been accelerating their vaccination process. In this blog post, I will be giving an simple overview of the situation in Nigeria.\nData Description\n\n\n\n\n\n\n\n\n\n\n\n\n",
     "preview": {},
-    "last_modified": "2021-09-02T01:07:31+08:00",
-    "input_file": {}
+    "last_modified": "2021-09-02T01:56:08+08:00",
+    "input_file": "blog1.knit.md"
   }
 ]
