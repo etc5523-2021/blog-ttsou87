@@ -110,6 +110,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 <!--/radix_placeholder_meta_tags-->
   
+  <meta name="citation_reference" content="citation_title=Coronavirus pandemic (COVID-19);citation_publication_date=2020;citation_author=Lucas Rodés-Guirao Hannah Ritchie;citation_author=Max Roser"/>
   <!--radix_placeholder_rmarkdown_metadata-->
 
 <script type="text/json" id="radix-rmarkdown-metadata">
@@ -118,7 +119,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--/radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-resource-manifest">
-  {"type":"character","attributes":{},"value":["blog1_files/anchor-4.2.2/anchor.min.js","blog1_files/bowser-1.9.3/bowser.min.js","blog1_files/distill-2.2.21/template.v2.js","blog1_files/header-attrs-2.9/header-attrs.js","blog1_files/jquery-1.11.3/jquery.min.js","blog1_files/popper-2.6.0/popper.min.js","blog1_files/tippy-6.2.7/tippy-bundle.umd.min.js","blog1_files/tippy-6.2.7/tippy-light-border.css","blog1_files/tippy-6.2.7/tippy.css","blog1_files/tippy-6.2.7/tippy.umd.min.js","blog1_files/webcomponents-2.0.0/webcomponents.js"]}
+  {"type":"character","attributes":{},"value":["blog1_files/anchor-4.2.2/anchor.min.js","blog1_files/bowser-1.9.3/bowser.min.js","blog1_files/distill-2.2.21/template.v2.js","blog1_files/header-attrs-2.9/header-attrs.js","blog1_files/jquery-1.11.3/jquery.min.js","blog1_files/kePrint-0.0.1/kePrint.js","blog1_files/lightable-0.0.1/lightable.css","blog1_files/popper-2.6.0/popper.min.js","blog1_files/tippy-6.2.7/tippy-bundle.umd.min.js","blog1_files/tippy-6.2.7/tippy-light-border.css","blog1_files/tippy-6.2.7/tippy.css","blog1_files/tippy-6.2.7/tippy.umd.min.js","blog1_files/webcomponents-2.0.0/webcomponents.js"]}
   </script>
   <!--radix_placeholder_navigation_in_header-->
 <meta name="distill:offset" content="../.."/>
@@ -2362,6 +2363,8 @@ d-appendix d-footnote-list a.footnote-backlink {
 }</style>
 <!--/radix_placeholder_distill-->
   <script src="../../site_libs/header-attrs-2.9/header-attrs.js"></script>
+  <script src="../../site_libs/kePrint-0.0.1/kePrint.js"></script>
+  <link href="../../site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
   <script src="../../site_libs/jquery-1.11.3/jquery.min.js"></script>
   <script src="../../site_libs/popper-2.6.0/popper.min.js"></script>
   <link href="../../site_libs/tippy-6.2.7/tippy.css" rel="stylesheet" />
@@ -2431,23 +2434,354 @@ d-appendix d-footnote-list a.footnote-backlink {
 <h3>Contents</h3>
 <ul>
 <li><a href="#introduction">Introduction</a></li>
-<li><a href="#data-description">Data Description</a></li>
+<li><a href="#data-description">Data Description</a>
+<ul>
+<li><a href="#covid-19-confirmed-cases-and-death">COVID-19 Confirmed cases and Death</a></li>
+<li><a href="#vaccine-source-and-vaccination-rate">Vaccine Source and Vaccination Rate</a></li>
+</ul></li>
 </ul>
 </nav>
 </div>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
 <h2 id="introduction">Introduction</h2>
-<p>As we move towards the third quarter of 2021, many countries around the world have been accelerating their vaccination process. In this blog post, I will be giving an simple overview of the situation in Nigeria.</p>
+<p>As we move towards the third quarter of 2021, many countries around the world have been accelerating their vaccination process. Unfortunately, the same cannot be said for other countries, especially those developing countries without the technology or resource to develop their own vaccines. Nigeria, being a country under the <a href="https://www.humanitarianresponse.info/en/operations/nigeria/humanitarian-response-plan">Humanitarian Response Plan (HRP)</a>, is one of the countries that requires external support. In this blog post, I will be looking into the coronavirus situation in Nigeria using data from <a href="https://github.com/owid/covid-19-data/tree/master/public/data">Our World in Data</a>.</p>
 <h2 id="data-description">Data Description</h2>
+<p>Two data sets are used in this short overview of COVID-19 situation in Nigeria, one on COVID-19 cases and one regarding the vaccination progress in Nigeria <span class="citation" data-cites="owidcoronavirus"><a href="#ref-owidcoronavirus" role="doc-biblioref">Hannah Ritchie and Roser</a> (<a href="#ref-owidcoronavirus" role="doc-biblioref">2020</a>)</span>.</p>
+<h3 id="covid-19-confirmed-cases-and-death">COVID-19 Confirmed cases and Death</h3>
+<p>Due to the conditions in Nigeria, many of the more detailed variables such as <code>icu patients</code>, <code>weekly_icu_admissions</code>..etc. are missing from the data set. As COVID-19 related data is aggregated for countries all around the world, more developed countries with better recording resources will have more data. Nigeria, on the other hand, lacks record hence it has 45 less columns of data in comparison. For the purpose of my analysis, I cleaned up the data to remove the columns with completely no data, and used the remaining columns to illustrate the conditions of Nigeria.</p>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<p>Following is the data description table for the cases data set:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:200px; ">
+<table class="table lightable-paper lightable-striped" style="margin-left: auto; margin-right: auto; font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:description1">Table 1: </span><strong>Data Description table for COVID-19 Confirmed cases and Death</strong>
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;font-weight: bold;color: #f3ac50 !important;background-color: #2596be !important;text-align: center;position: sticky; top:0; background-color: #FFFFFF;">
+Variables
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;font-weight: bold;color: #f3ac50 !important;background-color: #2596be !important;text-align: center;position: sticky; top:0; background-color: #FFFFFF;">
+Description
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+date
+</td>
+<td style="text-align:left;font-style: italic;">
+Date of Record
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+total_cases
+</td>
+<td style="text-align:left;font-style: italic;">
+Total confirmed cases of COVID-19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+new_cases
+</td>
+<td style="text-align:left;font-style: italic;">
+New confirmed cases of COVID-19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+new_cases_smoothed
+</td>
+<td style="text-align:left;font-style: italic;">
+New confirmed cases of COVID-19 (7-day smoothed)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+total_deaths
+</td>
+<td style="text-align:left;font-style: italic;">
+Total deaths attributed to COVID-19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+new_deaths
+</td>
+<td style="text-align:left;font-style: italic;">
+New deaths attributed to COVID-19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+new_deaths_smoothed
+</td>
+<td style="text-align:left;font-style: italic;">
+New deaths attributed to COVID-19 (7-day smoothed)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+total_cases_per_million
+</td>
+<td style="text-align:left;font-style: italic;">
+Total confirmed cases of COVID-19 per 1,000,000 people
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+new_cases_per_million
+</td>
+<td style="text-align:left;font-style: italic;">
+New confirmed cases of COVID-19 per 1,000,000 people
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+new_cases_smoothed_per_million
+</td>
+<td style="text-align:left;font-style: italic;">
+New confirmed cases of COVID-19 (7-day smoothed) per 1,000,000 people
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+total_deaths_per_million
+</td>
+<td style="text-align:left;font-style: italic;">
+Real-time estimate of the effective reproduction rate (R) of COVID-19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+new_deaths_per_million
+</td>
+<td style="text-align:left;font-style: italic;">
+Date of Record
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+new_deaths_smoothed_per_million
+</td>
+<td style="text-align:left;font-style: italic;">
+Total confirmed cases of COVID-19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+reproduction_rate
+</td>
+<td style="text-align:left;font-style: italic;">
+New confirmed cases of COVID-19
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<h3 id="vaccine-source-and-vaccination-rate">Vaccine Source and Vaccination Rate</h3>
+<p>Our World in Data’s vaccination data is a compilation of vaccination data that are verifiable based on public official sources. The vaccination data is separated into two smaller data set, one containing the source of the vaccines and the other the vaccinated population count.</p>
+<h4 id="vaccine-source">Vaccine Source</h4>
+<p>The following table contains the data descriptions for the vaccine source:</p>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
 <div class="layout-chunk" data-layout="l-body">
+<table class="table lightable-paper lightable-striped" style="margin-left: auto; margin-right: auto; font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:description2">Table 2: </span><strong>Data Description table for vaccine source</strong>
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;font-weight: bold;color: #f3ac50 !important;background-color: #2596be !important;text-align: center;">
+Variables
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;font-weight: bold;color: #f3ac50 !important;background-color: #2596be !important;text-align: center;">
+Description
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Pipeline
+</td>
+<td style="text-align:left;font-style: italic;">
+The vaccine pipeline through which the vaccine was delivered. Either COVAX or Other.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Vaccine
+</td>
+<td style="text-align:left;font-style: italic;">
+The common name of the vaccine delivered
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Funder
+</td>
+<td style="text-align:left;font-style: italic;">
+The name of the funder that funded the procurement of the vaccine. ‘Procured’ is used where a country purchased the vaccines using their own funds.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Doses
+</td>
+<td style="text-align:left;font-style: italic;">
+The number of doses delivered
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Source.Url
+</td>
+<td style="text-align:left;font-style: italic;">
+The URL of the source article where information about the delivery was published
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NewPipeline
+</td>
+<td style="text-align:left;font-style: italic;">
+Combination of pipeline and Funder
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Date
+</td>
+<td style="text-align:left;font-style: italic;">
+The date when the vaccine delivery was reported
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="vaccine-administered">Vaccine Administered</h4>
+<p>The following table contains the data descriptions for the vaccination progress:</p>
+<div class="layout-chunk" data-layout="l-body">
 
 </div>
 <div class="layout-chunk" data-layout="l-body">
-
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; ">
+<table class="table lightable-paper lightable-striped" style="margin-left: auto; margin-right: auto; font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:description3">Table 3: </span><strong>Data Description table for the vaccination progress</strong>
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;font-weight: bold;color: #f3ac50 !important;background-color: #2596be !important;text-align: center;position: sticky; top:0; background-color: #FFFFFF;">
+Variables
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;font-weight: bold;color: #f3ac50 !important;background-color: #2596be !important;text-align: center;position: sticky; top:0; background-color: #FFFFFF;">
+Description
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+date
+</td>
+<td style="text-align:left;font-style: italic;">
+Date of the observation
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+total_vaccinations
+</td>
+<td style="text-align:left;font-style: italic;">
+Total number of doses administered. For vaccines that require multiple doses, each individual dose is counted. If a person receives one dose of the vaccine, this metric goes up by 1. If they receive a second dose, it goes up by 1 again. If they receive a third/booster dose, it goes up by 1 again.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+people_vaccinated
+</td>
+<td style="text-align:left;font-style: italic;">
+total number of people who received at least one vaccine dose. If a person receives the first dose of a 2-dose vaccine, this metric goes up by 1. If they receive the second dose, the metric stays the same.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+people_fully_vaccinated
+</td>
+<td style="text-align:left;font-style: italic;">
+Total number of people who received all doses prescribed by the vaccination protocol. If a person receives the first dose of a 2-dose vaccine, this metric stays the same. If they receive the second dose, the metric goes up by 1.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+daily_vaccinations_raw
+</td>
+<td style="text-align:left;font-style: italic;">
+Daily change in the total number of doses administered. It is only calculated for consecutive days.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+daily_vaccinations
+</td>
+<td style="text-align:left;font-style: italic;">
+New doses administered per day (7-day smoothed). For countries that don’t report data on a daily basis, we assume that doses changed equally on a daily basis over any periods in which no data was reported. This produces a complete series of daily figures, which is then averaged over a rolling 7-day window.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+total_vaccinations_per_hundred
+</td>
+<td style="text-align:left;font-style: italic;">
+<code>total_vaccinations</code> per 100 people in the total population of the country.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+people_vaccinated_per_hundred
+</td>
+<td style="text-align:left;font-style: italic;">
+<code>people_vaccinated</code> per 100 people in the total population of the country.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+people_fully_vaccinated_per_hundred
+</td>
+<td style="text-align:left;font-style: italic;">
+<code>people_fully_vaccinated</code> per 100 people in the total population of the country.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+daily_vaccinations_per_million
+</td>
+<td style="text-align:left;font-style: italic;">
+<code>daily_vaccinations</code> per 1,000,000 people in the total population of the country.
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
+<div id="ref-owidcoronavirus" class="csl-entry" role="doc-biblioentry">
+Hannah Ritchie, Lucas Rodés-Guirao, Edouard Mathieu, and Max Roser. 2020. <span>“Coronavirus Pandemic (COVID-19).”</span> <em>Our World in Data</em>.
+</div>
+</div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
