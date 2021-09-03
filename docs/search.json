@@ -6,7 +6,7 @@
       "description": "Welcome to my blog created for ETC5523 Communicating with Data. Here I will publish a series of blog posts analysing COVID-19 related data and more.",
       "author": [],
       "contents": "\n\n\n\n",
-      "last_modified": "2021-09-02T01:16:31+08:00"
+      "last_modified": "2021-09-03T18:24:02+08:00"
     },
     {
       "path": "index.html",
@@ -14,7 +14,7 @@
       "description": "Welcome to the website.\n",
       "author": [],
       "contents": "\n\n\n\n",
-      "last_modified": "2021-09-02T01:16:34+08:00"
+      "last_modified": "2021-09-03T18:25:01+08:00"
     }
   ],
   "collections": ["posts/posts.json"]
