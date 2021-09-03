@@ -173,7 +173,34 @@ Since then, measures has been taken to enhance regulations. "President Muhammadu
 
 #### Vaccines
 
-With people getting tired of social distancing practices, the next best way to fight against the virus is vaccines. However, Nigeria is slow at vaccinating its people.
+With people getting tired of social distancing practices, the next best way to fight against the virus is vaccines. However, Nigeria is slow at vaccinating its people. This is largely due to the lack of access to the vaccines.
+
+The following is a table of all the vaccines Nigeria has received
+
+```{r vaccines, tab.cap='Sources of Vaccines received by Nigeria and their quantities'}
+source %>% select(!c(Source.Url, NewPipeline, Date))%>%
+  mutate(Doses = as.numeric(gsub(",", "", Doses)))%>%
+  arrange(Vaccine)%>%
+  kable()%>%kable_styling(fixed_thead = T,full_width = F, position = "center") %>% 
+  kable_paper(c("striped", "hover")) %>%
+  row_spec(0, bold = T, color = "#f3ac50", background = "#2596be", align = "c")
+```
+
+As shown in the table above, almost all of the vaccines Nigeria received has was from other countries. They only government bought vaccines were 300000 doses of Astra Zeneca. It is clear that Nigeria is in a passive position when it comes to vaccination.
+
+```{r plotvaccination, fig.cap='Daily Vaccination record of 2021'}
+p <- vaccination %>% 
+  ggplot(aes(x = date, y = daily_vaccinations))+ geom_line(na.rm= TRUE)+
+  labs(x = "Date", y = "Daily Vaccinations", title = "Daily vaccination from March to August")+
+  scale_x_date(date_breaks = "1 month",labels = scales::date_format("%m"))+
+  theme_minimal()
+ggplotly(p)
+```
+
+At first glance, it may seem like Nigeria has vaccinated a lot of it's people. However, Considering that Nigeria has a population of [201 million people](https://www.worldometers.info/world-population/nigeria-population/), this vaccination rate is quite low. 
+
+
+
 
 
 
