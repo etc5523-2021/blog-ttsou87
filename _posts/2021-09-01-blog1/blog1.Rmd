@@ -31,6 +31,8 @@ library(ggplot2)
 library(DT)
 library(plotly)
 library(kableExtra)
+library(lubridate)
+library(sparkline)
 ```
 ## Introduction
 As we move towards the third quarter of 2021, many countries around the world have been accelerating their vaccination process. Unfortunately, the same cannot be said for other countries, especially those developing countries without the technology or resource to develop their own vaccines. Nigeria, being a country under the [Humanitarian Response Plan (HRP)](https://www.humanitarianresponse.info/en/operations/nigeria/humanitarian-response-plan), is one of the countries that requires external support. In this blog post, I will be looking into the coronavirus situation in Nigeria using data from [Our World in Data](https://github.com/owid/covid-19-data/tree/master/public/data).
@@ -58,7 +60,7 @@ Following is the data description table for the cases data set:
 
 ```{r description1}
 variables1 <- colnames(nigeria_cleaned)
-description1 <- c("Date of Record", "Total confirmed cases of COVID-19", "New confirmed cases of COVID-19", "New confirmed cases of COVID-19 (7-day smoothed)","Total deaths attributed to COVID-19","New deaths attributed to COVID-19", "New deaths attributed to COVID-19 (7-day smoothed)", "Total confirmed cases of COVID-19 per 1,000,000 people","New confirmed cases of COVID-19 per 1,000,000 people","New confirmed cases of COVID-19 (7-day smoothed) per 1,000,000 people", "Real-time estimate of the effective reproduction rate (R) of COVID-19")
+description1 <- c("Date of Record", "Total confirmed cases of COVID-19", "New confirmed cases of COVID-19", "New confirmed cases of COVID-19 (7-day smoothed)","Total deaths attributed to COVID-19","New deaths attributed to COVID-19", "New deaths attributed to COVID-19 (7-day smoothed)", "Total confirmed cases of COVID-19 per 1,000,000 people","New confirmed cases of COVID-19 per 1,000,000 people","New confirmed cases of COVID-19 (7-day smoothed) per 1,000,000 people","Total deaths attributed to COVID-19 per 1,000,000 people","New deaths attributed to COVID-19 per 1,000,000 people","New deaths attributed to COVID-19 (7-day smoothed) per 1,000,000 people","Real-time estimate of the effective reproduction rate (R) of COVID-19")
 
 kable(cbind(variables1, description1),
     col.names = c("Variables",
@@ -120,7 +122,58 @@ kable(cbind(variables3, description3),
   scroll_box(height = "300px")
 ```
 
+## Data Exploration
 
+#### Cases and Deaths
+The table below is an interactive table that explores the confirmed cases and COVID-19 related deaths in Nigeria since the first outbreak in February of 2020.
+
+It is important to note that because there were only two dates recorded for cases in February 2020, the monthly cases plot is unreliable. The mean reproduction rate of the virus was calculated for each month by taking the average. Days were the reproduction rate was not recorded are not included in the computation. 
+
+```{r explore1data}
+nigeria_ym<- nigeria_cleaned %>% 
+  mutate(
+    date = ymd(date),
+    yr_month = format_ISO8601(date, precision = "ym"))%>%
+  select(!c(date, new_deaths_smoothed, new_cases_smoothed,contains("per_million")))%>%
+  group_by(yr_month)%>%
+  summarise("monthly cases" = spk_chr(new_cases,
+                           lineColor = 'black', 
+                           fillColor = "#2596be",
+                           width = 80,
+                           height = 60),
+            across(total_cases:new_deaths, ~sum(.x, na.rm = TRUE)),
+            reproduction_rate = mean(reproduction_rate, na.rm = TRUE))%>%
+  separate(yr_month, c("Year","Month"),sep = "-")
+names(nigeria_ym) <-  gsub("_", " ", names(nigeria_ym))
+```
+
+
+```{r explore1, fig.cap='Confrimed Cases and Deaths from 2020-2021'}
+nigeria_ym %>%
+  datatable(escape = FALSE,
+            filter = 'top',
+            width = '100%',
+            extension = c('Buttons','Scroller'),
+            options = list(dom = 'Bfrtip',
+                           deferRender = TRUE,
+                           scrollY = 350,
+                           scrollX= TRUE,
+                           scroller= TRUE,
+                           buttons = c('copy', 'csv','pdf', 'print'))
+            ) %>% 
+  formatRound(columns='reproduction rate', digits=3)%>%
+  spk_add_deps()
+```
+
+Table \@ref(fig:explore1) shows that a month with high number of new cases is followed by a month with high death. For example January 2021, where the highest number of new cases was recorded in a month, was followed by February, with the highest record of deaths in a month. A reason for the surge of second wave in January 2021 was explained in this Financial Times [article](https://www.ft.com/content/3d000093-87a3-48f3-8bb5-4ad9a8316aa1).
+
+  >“What is driving it . . . is very clearly human behaviour,” he said, arguing that, after strong compliance with mitigation measures last year, “prevention fatigue” had set in, with people neglecting social distancing practices. @ftarticle
+
+Since then, measures has been taken to enhance regulations. "President Muhammadu Buhari signed the COVID-19 Health Protection Regulations into law in January 2021" @surge.
+
+#### Vaccines
+
+With people getting tired of social distancing practices, the next best way to fight against the virus is vaccines. However, Nigeria is slow at vaccinating its people.
 
 
 
