@@ -17,7 +17,9 @@ bibliography: ../../references.bib
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,
-                      message = FALSE)
+                      message = FALSE,
+                      warning = FALSE,
+                      cache = TRUE)
 
 ```
 
@@ -25,53 +27,179 @@ knitr::opts_chunk$set(echo = FALSE,
 # load library
 library(tidyverse)
 library(ggplot2)
-library(DT)
+library(gganimate)
+library(readxl)
 library(plotly)
 library(kableExtra)
 library(lubridate)
-library(sparkline)
 library(leaflet)
 ```
 
-```{r}
-ukcovid <-readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=overview&metric=newDailyNsoDeathsByDeathDate&metric=newPeopleVaccinatedCompleteByPublishDate&metric=newPeopleVaccinatedFirstDoseByPublishDate&metric=newPeopleVaccinatedSecondDoseByPublishDate&metric=newCasesByPublishDate&format=csv")
-```
+## Introduction
 
-```{r}
+
+## Data Description
+Two data sets are used in this analysis.
+
+### COVID-19 Confirmed cases and Death
+```{r cases}
+cases <- read.csv(here::here("data","cases-uk.csv"))%>%
+  select(!c(areaType, areaName, areaCode))
+
+death <- read.csv(here::here("data","deaths–uk.csv"))%>%
+  select(!c(areaType, areaName, areaCode))
+
+ukdaily <- merge(cases,death, by= "date", all = TRUE)
+ukdaily$date<- as.Date(ukdaily$date)
+ukdaily[is.na(ukdaily)] <- 0
+
+read_excel(here::here("data","ukdict.xlsx"), sheet=1) %>%
+  kable(booktabs = TRUE)%>%
+  kable_styling(fixed_thead = T) %>% 
+  kable_paper("striped") %>%
+  row_spec(0, bold = T, color = "#f3ac50", background = "#2596be", align = "c") %>%
+  column_spec(2, italic = T)
+```
+#### Data Limitations
+
+### Vaccination in the United Kingdom
+```{r ukvaccinesuptake}
+ukvacc <- read.csv(here::here("data","uk-vacc-uptake.csv"))%>%
+  select(!c(areaType, areaName, areaCode))
+ukvacc$date<- as.Date(ukvacc$date)
+
+read_excel(here::here("data","ukdict.xlsx"), sheet=2) %>%
+  kable(booktabs = TRUE)%>%
+  kable_styling(fixed_thead = T) %>% 
+  kable_paper("striped") %>%
+  row_spec(0, bold = T, color = "#f3ac50", background = "#2596be", align = "c") %>%
+  column_spec(2, italic = T)
+```
+#### Data Limitation
+
+### Vaccination in England(Regions)
+
+```{r df-vaccination-in-England}
 #import region data
-eastmidlands <- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000004&metric=newCasesByPublishDate&metric=newPeopleVaccinatedCompleteByVaccinationDate&metric=newPeopleVaccinatedFirstDoseByVaccinationDate&metric=newPeopleVaccinatedSecondDoseByVaccinationDate&metric=newDailyNsoDeathsByDeathDate&format=csv")
+eastmidlands <- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000004&metric=cumPeopleVaccinatedCompleteByPublishDate&metric=cumPeopleVaccinatedFirstDoseByPublishDate&metric=cumPeopleVaccinatedSecondDoseByPublishDate&format=csv")
 
-eastofengland <- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000006&metric=newCasesByPublishDate&metric=newPeopleVaccinatedCompleteByVaccinationDate&metric=newPeopleVaccinatedFirstDoseByVaccinationDate&metric=newPeopleVaccinatedSecondDoseByVaccinationDate&metric=newDailyNsoDeathsByDeathDate&format=csv")
+eastofengland <- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000006&metric=cumPeopleVaccinatedCompleteByPublishDate&metric=cumPeopleVaccinatedFirstDoseByPublishDate&metric=cumPeopleVaccinatedSecondDoseByPublishDate&format=csv")
 
-london<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000007&metric=newCasesByPublishDate&metric=newPeopleVaccinatedCompleteByVaccinationDate&metric=newPeopleVaccinatedFirstDoseByVaccinationDate&metric=newPeopleVaccinatedSecondDoseByVaccinationDate&metric=newDailyNsoDeathsByDeathDate&format=csv")
+london<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000007&metric=cumPeopleVaccinatedCompleteByPublishDate&metric=cumPeopleVaccinatedFirstDoseByPublishDate&metric=cumPeopleVaccinatedSecondDoseByPublishDate&format=csv")
 
-northeast<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000001&metric=newCasesByPublishDate&metric=newPeopleVaccinatedCompleteByVaccinationDate&metric=newPeopleVaccinatedFirstDoseByVaccinationDate&metric=newPeopleVaccinatedSecondDoseByVaccinationDate&metric=newDailyNsoDeathsByDeathDate&format=csv")
+northeast<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000001&metric=cumPeopleVaccinatedCompleteByPublishDate&metric=cumPeopleVaccinatedFirstDoseByPublishDate&metric=cumPeopleVaccinatedSecondDoseByPublishDate&format=csv")
 
-northwest<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000002&metric=newCasesByPublishDate&metric=newPeopleVaccinatedCompleteByVaccinationDate&metric=newPeopleVaccinatedFirstDoseByVaccinationDate&metric=newPeopleVaccinatedSecondDoseByVaccinationDate&metric=newDailyNsoDeathsByDeathDate&format=csv")
+northwest<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000002&metric=cumPeopleVaccinatedCompleteByPublishDate&metric=cumPeopleVaccinatedFirstDoseByPublishDate&metric=cumPeopleVaccinatedSecondDoseByPublishDate&format=csv")
 
-southeast<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000008&metric=newCasesByPublishDate&metric=newPeopleVaccinatedCompleteByVaccinationDate&metric=newPeopleVaccinatedFirstDoseByVaccinationDate&metric=newPeopleVaccinatedSecondDoseByVaccinationDate&metric=newDailyNsoDeathsByDeathDate&format=csv")
+southeast<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000008&metric=cumPeopleVaccinatedCompleteByPublishDate&metric=cumPeopleVaccinatedFirstDoseByPublishDate&metric=cumPeopleVaccinatedSecondDoseByPublishDate&format=csv")
 
-southwest<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000009&metric=newCasesByPublishDate&metric=newPeopleVaccinatedCompleteByVaccinationDate&metric=newPeopleVaccinatedFirstDoseByVaccinationDate&metric=newPeopleVaccinatedSecondDoseByVaccinationDate&metric=newDailyNsoDeathsByDeathDate&format=csv")
+southwest<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E1200000&metric=cumPeopleVaccinatedCompleteByPublishDate&metric=cumPeopleVaccinatedFirstDoseByPublishDate&metric=cumPeopleVaccinatedSecondDoseByPublishDate&format=csv")
 
-westmidlands<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000005&metric=newCasesByPublishDate&metric=newPeopleVaccinatedCompleteByVaccinationDate&metric=newPeopleVaccinatedFirstDoseByVaccinationDate&metric=newPeopleVaccinatedSecondDoseByVaccinationDate&metric=newDailyNsoDeathsByDeathDate&format=csv")
+westmidlands<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000005&metric=cumPeopleVaccinatedCompleteByPublishDate&metric=cumPeopleVaccinatedFirstDoseByPublishDate&metric=cumPeopleVaccinatedSecondDoseByPublishDate&format=csv")
 
-yorkshirehumber<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000003&metric=newCasesByPublishDate&metric=newPeopleVaccinatedCompleteByVaccinationDate&metric=newPeopleVaccinatedFirstDoseByVaccinationDate&metric=newPeopleVaccinatedSecondDoseByVaccinationDate&metric=newDailyNsoDeathsByDeathDate&format=csv")
+yorkshirehumber<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000003&metric=cumPeopleVaccinatedCompleteByPublishDate&metric=cumPeopleVaccinatedFirstDoseByPublishDate&metric=cumPeopleVaccinatedSecondDoseByPublishDate&format=csv")
 
-#ukdf <- cbind(eastmidlands, eastofengland, london, northeast, northwest,southeast, southwest, westmidlands, yorkshirehumber)
+vaccdf <- rbind(eastmidlands, eastofengland, london, northeast, northwest,southeast, southwest, westmidlands, yorkshirehumber)
+```
+
+#### Data Limitations
+
+## Data Exploration
+
+### Vaccine helps!
+```{r daily-update-of-covid}
+scatter <- ukdaily %>% 
+  ggplot(aes(x= date, y = newCasesBySpecimenDate, 
+             colour = newDeaths28DaysByDeathDate))+
+  geom_line(alpha = 0.6)+
+  geom_point()+
+  labs(title = "Daily COVID-19 Cases and Deaths in the United Kingdom",
+       colour ="Daily Deaths",
+       x = "Date",
+       y ="Daily Confirmed Cases")+
+  scale_colour_gradient(low = "blue", high = "black")+ theme_minimal()+
+  theme(legend.position = "bottom")
+
+scatter.animate <- scatter + 
+  transition_reveal(date)+
+  view_follow(fixed_y = TRUE)
+animate(scatter.animate, fps = 30, duration = 10, end_pause = 60)
+anim_save("scatter.gif")
+
 ```
 
 ```{r}
+ukvacc_longer <- ukvacc %>% 
+  rename("1st Dose"=cumVaccinationFirstDoseUptakeByPublishDatePercentage,
+         "2nd Dose" = cumVaccinationSecondDoseUptakeByPublishDatePercentage) %>% 
+    pivot_longer(cols=c("1st Dose","2nd Dose"),
+                        names_to = "doses",
+                        values_to = "percentage")
+
+vaccpop <- ukvacc_longer %>% ggplot(aes(x = date,
+                             y = percentage,
+                             colours = doses))+ 
+  geom_ribbon(aes(ymin = min(percentage),ymax = percentage, fill = doses))+
+  labs(title = "Latest reported vaccination uptake (in 2021)",
+       colour ="Doses",
+       x = "Date",
+       y ="Percentage of population\nvaccinated(16yr+)")+ 
+  scale_x_date(date_labels = "%d %b",date_breaks = "2 week")+
+  scale_y_continuous(breaks = seq(0,100, by=20),
+                     labels = ~scales::percent(., scale = 1))+
+  scale_fill_manual(values=c("#5F9EA0", "#E1B378"))+theme_minimal()+
+  theme(legend.position = "bottom",
+        axis.text.x = element_text(angle=90,vjust = 0.5))
+
+vaccpop %>% ggplotly(dynamicTicks = TRUE,type="scattergl")%>%
+  rangeslider() %>% 
+  layout(hovermode ="x unified")
+
+
+
+```
+
+```{r map,}
 regions <- sf::st_read("RegionsBoundaries.geojson")
 
-simplifiedregions <-rmapshaper::ms_simplify(regions)
+vaccdf
+# Creating a color palette based on the number range in the total column
+pal <- colorNumeric("Blues", domain=vaccdf$cumPeopleVaccinatedCompleteByPublishDate)
 
-leaflet() %>%
-  setView(lng = -1.47, lat = 52.3, zoom = 6) %>%
-  addProviderTiles(providers$Esri.WorldGrayCanvas) %>%
-  addPolygons(data = simplifiedregions,
-              color = "blue",
-              fillOpacity = 0,
-              weight  = 1,
-              popup = ~rgn17nm)
+# Setting up the pop up text
+popup_sb <- paste0("Fully Vacc: ",
+                   vaccdf$cumPeopleVaccinatedCompleteByPublishDate)
+
+simplifiedregions <-rmapshaper::ms_simplify(regions)
+leaflet(simplifiedregions) %>% 
+  addPolygons(stroke = TRUE, opacity =0.6,
+              fillOpacity = 0.5,
+              smoothFactor = 0.5,
+              color = "black",
+              fillColor = ~pal(vaccdf$cumPeopleVaccinatedCompleteByPublishDate),
+              popup= ~popup_sb) %>% 
+  addLegend(pal = pal,
+            values = vaccdf$cumPeopleVaccinatedCompleteByPublishDate,
+            position = "bottomleft",
+            title= "Fully Vaccinated Population")
+
+# addPolygons(data = states_merged_sb , 
+#               fillColor = ~pal(states_merged_sb$total), 
+#               fillOpacity = 0.7, 
+#               weight = 0.2, 
+#               smoothFactor = 0.2, 
+#               popup = ~popup_sb) %>%
+#   addLegend(pal = pal, 
+#             values = states_merged_sb$total, 
+#             position = "bottomright", 
+#             title = "Starbucks")
+# leaflet() %>%
+#   setView(lng = -1.47, lat = 52.3, zoom = 6) %>%
+#   addProviderTiles(providers$Esri.WorldGrayCanvas) %>%
+#   addPolygons(data = simplifiedregions,
+#               color = "blue",
+#               fillOpacity = 0,
+#               weight  = 1,
+#               popup = ~rgn17nm)
 ```
 

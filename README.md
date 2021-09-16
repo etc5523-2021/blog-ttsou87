@@ -28,7 +28,7 @@ This assessment is due Fri Sep 17 2021 11.55PM AEST.
 
 My selected country is **United Kingdom**.
 
-The relevant blog post for this assessment is in [FILL].html
+The relevant blog post for this assessment is in [here](https://etc5523-2021.github.io/blog-ttsou87/posts/2021-09-14-blog2/)
 
 - [ ] Selected a new country
 - [ ] Data Story 1
