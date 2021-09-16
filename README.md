@@ -26,7 +26,7 @@ The relevant blog post for this assessment is [here](https://etc5523-2021.github
 
 This assessment is due Fri Sep 17 2021 11.55PM AEST.
 
-My selected country is [FILL].
+My selected country is **United Kingdom**.
 
 The relevant blog post for this assessment is in [FILL].html
 

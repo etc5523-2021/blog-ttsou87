@@ -1,10 +1,9 @@
 ---
-title: "blog2"
+title: "COVID-19 in the United Kingdom(England)"
 description: |
    This post contains simple overview of the COVID-19 statistics in United Kingdom and the vaccination statistics up till August, 2021.
 author:
   - name: Tina Tsou
-    url: {}
 date: 09-14-2021
 categories:
   - Covid-19
@@ -31,6 +30,48 @@ library(plotly)
 library(kableExtra)
 library(lubridate)
 library(sparkline)
+library(leaflet)
 ```
 
+```{r}
+ukcovid <-readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=overview&metric=newDailyNsoDeathsByDeathDate&metric=newPeopleVaccinatedCompleteByPublishDate&metric=newPeopleVaccinatedFirstDoseByPublishDate&metric=newPeopleVaccinatedSecondDoseByPublishDate&metric=newCasesByPublishDate&format=csv")
+```
+
+```{r}
+#import region data
+eastmidlands <- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000004&metric=newCasesByPublishDate&metric=newPeopleVaccinatedCompleteByVaccinationDate&metric=newPeopleVaccinatedFirstDoseByVaccinationDate&metric=newPeopleVaccinatedSecondDoseByVaccinationDate&metric=newDailyNsoDeathsByDeathDate&format=csv")
+
+eastofengland <- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000006&metric=newCasesByPublishDate&metric=newPeopleVaccinatedCompleteByVaccinationDate&metric=newPeopleVaccinatedFirstDoseByVaccinationDate&metric=newPeopleVaccinatedSecondDoseByVaccinationDate&metric=newDailyNsoDeathsByDeathDate&format=csv")
+
+london<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000007&metric=newCasesByPublishDate&metric=newPeopleVaccinatedCompleteByVaccinationDate&metric=newPeopleVaccinatedFirstDoseByVaccinationDate&metric=newPeopleVaccinatedSecondDoseByVaccinationDate&metric=newDailyNsoDeathsByDeathDate&format=csv")
+
+northeast<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000001&metric=newCasesByPublishDate&metric=newPeopleVaccinatedCompleteByVaccinationDate&metric=newPeopleVaccinatedFirstDoseByVaccinationDate&metric=newPeopleVaccinatedSecondDoseByVaccinationDate&metric=newDailyNsoDeathsByDeathDate&format=csv")
+
+northwest<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000002&metric=newCasesByPublishDate&metric=newPeopleVaccinatedCompleteByVaccinationDate&metric=newPeopleVaccinatedFirstDoseByVaccinationDate&metric=newPeopleVaccinatedSecondDoseByVaccinationDate&metric=newDailyNsoDeathsByDeathDate&format=csv")
+
+southeast<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000008&metric=newCasesByPublishDate&metric=newPeopleVaccinatedCompleteByVaccinationDate&metric=newPeopleVaccinatedFirstDoseByVaccinationDate&metric=newPeopleVaccinatedSecondDoseByVaccinationDate&metric=newDailyNsoDeathsByDeathDate&format=csv")
+
+southwest<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000009&metric=newCasesByPublishDate&metric=newPeopleVaccinatedCompleteByVaccinationDate&metric=newPeopleVaccinatedFirstDoseByVaccinationDate&metric=newPeopleVaccinatedSecondDoseByVaccinationDate&metric=newDailyNsoDeathsByDeathDate&format=csv")
+
+westmidlands<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000005&metric=newCasesByPublishDate&metric=newPeopleVaccinatedCompleteByVaccinationDate&metric=newPeopleVaccinatedFirstDoseByVaccinationDate&metric=newPeopleVaccinatedSecondDoseByVaccinationDate&metric=newDailyNsoDeathsByDeathDate&format=csv")
+
+yorkshirehumber<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000003&metric=newCasesByPublishDate&metric=newPeopleVaccinatedCompleteByVaccinationDate&metric=newPeopleVaccinatedFirstDoseByVaccinationDate&metric=newPeopleVaccinatedSecondDoseByVaccinationDate&metric=newDailyNsoDeathsByDeathDate&format=csv")
+
+#ukdf <- cbind(eastmidlands, eastofengland, london, northeast, northwest,southeast, southwest, westmidlands, yorkshirehumber)
+```
+
+```{r}
+regions <- sf::st_read("RegionsBoundaries.geojson")
+
+simplifiedregions <-rmapshaper::ms_simplify(regions)
+
+leaflet() %>%
+  setView(lng = -1.47, lat = 52.3, zoom = 6) %>%
+  addProviderTiles(providers$Esri.WorldGrayCanvas) %>%
+  addPolygons(data = simplifiedregions,
+              color = "blue",
+              fillOpacity = 0,
+              weight  = 1,
+              popup = ~rgn17nm)
+```
 
