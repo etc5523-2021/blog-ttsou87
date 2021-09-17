@@ -13,6 +13,9 @@ output:
     self_contained: false
     toc: true
 bibliography: ../../references.bib
+preview: scatter.gif
+base_url: https://etc5523-2021.github.io/blog-ttsou87/posts/2021-09-14-blog2
+
 ---
 
 ```{r setup, include=FALSE}
@@ -37,7 +40,7 @@ library(leaflet)
 
 ## Introduction
 As we close to the end of second year living under the coronavirus pandemic, hopes of returning back to normal seems more and more like a dream because there seems to be no end in case numbers. Even with the roll-out of vaccines to fight against the virus, we can't seem to beat the speed at which the virus mutates into stronger variants. The United Kingdom is a country who has no shortage of COVID-19 vaccines.
-The government has mobilized its resources and secured doses to vaccinate its people quickly. This blog aims to explore the status of the country during the pandemic as well as the impacts of vaccination.
+The government has mobilized its resources and secured doses to vaccinate its people quickly. This blog aims to explore the status of the country during the pandemic as well as the impacts of vaccination. Is there really no end to the pandemic? What is the vaccine doing if it doesn't prevent cases from going up?
 
 ## Data Description
 Three data sets are used in this analysis. [Coronavirus (Covid-19) in the UK](https://coronavirus.data.gov.uk/) is the main source for these data sets.
@@ -150,7 +153,7 @@ The analysis is completed using R Studio @rstudio. Packages used are `tidyverse`
 
 Is there really no hope of returning life back to "normal"? Just looking at the sheer number of confirmed cases and the waves of spike in cases, "normal" seems like wishful thinking. However, when adding the number of deaths to th the plot, it is evident that number of of deaths has dropped drastically. 
 
-```{r daily-update-of-covid}
+```{r scatter, fig.cap ='Daily Update of Confirmed cases and Deaths'}
 scatter <- ukdaily %>% 
   ggplot(aes(x= date, y = newCasesBySpecimenDate, 
              colour = newDeaths28DaysByDeathDate))+
@@ -161,7 +164,8 @@ scatter <- ukdaily %>%
        x = "Date",
        y ="Daily Confirmed Cases")+
   scale_colour_gradient(low = "blue", high = "black")+ theme_minimal()+
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom",
+        plot.background = element_rect(fill="#fef9ea"))
 
 scatter.animate <- scatter + 
   transition_reveal(date)+
@@ -171,9 +175,9 @@ anim_save("scatter.gif")
 
 ```
 
-From the figure above, we see the daily confirmed cases and death as the time progresses. In January 2021, where there was peak confirmed cases, the number of deaths was also highest, at over 1000 deaths.The United Kingdom also started rolling out vaccines in January of 2021. When there was another spike in cases in July 2021, although cases numbers went up to as high as 60,000, the number of deaths was less than 100. This is evidence that the vaccine helps prevent death caused by COVID-19. 
+From the figure \@ref(fig:scatter), we see the daily confirmed cases and death as the time progresses. In January 2021, where there was peak confirmed cases, the number of deaths was also highest, at over 1000 deaths. The United Kingdom also started rolling out vaccines in January of 2021. When there was another spike in cases in July 2021, although cases numbers went up to as high as 60,000, the number of deaths was less than 100. This is evidence that the vaccine helps prevent death caused by COVID-19. 
 
-```{r}
+```{r uptake, fig.cap='Vaccine uptake has slow down',preview=TRUE}
 ukvacc_longer <- ukvacc %>% 
   rename("1st Dose"=cumVaccinationFirstDoseUptakeByPublishDatePercentage,
          "2nd Dose" = cumVaccinationSecondDoseUptakeByPublishDatePercentage) %>% 
@@ -194,22 +198,30 @@ vaccpop <- ukvacc_longer %>% ggplot(aes(x = date,
   scale_y_continuous(breaks = seq(0,100, by=20),
                      labels = ~scales::percent(., scale = 1))+
   scale_fill_manual(values=c("#5F9EA0", "#E1B378"))+theme_minimal()+
-  theme(legend.position = "bottom",
-        axis.text.x = element_text(angle=90,vjust = 0.5))
+  theme(legend.position = "hide",
+        axis.text.x = element_text(angle=90,vjust = 0.5),
+        plot.background = element_rect(fill="#fef9ea"))
 
 vaccpop %>% ggplotly()%>%
   #rangeslider() %>% 
   layout(hovermode ="x unified",
-         legend = list(orientation = "h"))
+         showlegend= FALSE,
+         paper_bgcolor='#fef9ea',
+         plot_bgcolor='#fef9ea')
 ```
 
-Looking at the graph above, we see that vaccination uptake started to slow down in June and July. Corresponding to the 'Daily COVID-19 Cases and Deaths in the United Kingdom' graph, we can observe that the first few months when the vaccine was administered, cases were controlled. There may be other factors influencing the number of confirmed cases such as new variants but from the graphs above, vaccine  seems to play a part in successfully preventing deaths in patients.
+Looking at figure \@ref(fig:uptake), we see that vaccination uptake started to slow down in June and July. Corresponding to the 'Daily COVID-19 Cases and Deaths in the United Kingdom' graph, we can observe that the first few months when the vaccine was administered, cases were controlled. There may be other factors influencing the number of confirmed cases such as new variants but from the graphs above, vaccine seems to play a part in successfully preventing deaths in patients.
 
 ### Vaccination in England(by Regions)
 
-```{r map}
-regions <- sf::st_read(here::here("data","RegionsBoundaries.geojson"))
+To explore the plateauing vaccine uptake, I explored the vaccination rate for different regions. Due to data limitations, I was only able to find data for region break down of England and not the other UK nations (Wales, Northern Ireland and Scotland). 
 
+```{r geojson, results='hide'}
+regions <- sf::st_read(here::here("data","RegionsBoundaries.geojson"))
+```
+Following is the choropleth map of fully vaccinated population in England. Hover your mouse above the map to see the vaccine statistics for each province.
+
+```{r map}
 # Creating a color palette based on the number range in the total column
 pal <- colorBin("Blues", domain=vaccdf$`Completely Vaccinated`, bin = 4, pretty = FALSE)
 
@@ -250,4 +262,9 @@ leaflet(regions) %>%
             position = "bottomleft",
             title= "Fully Vaccinated Population")
 ```
+
+Although from fig \@ref(fig:uptake) we saw the vaccine uptake is currently 89% for 1st dose and 80% for second dose, It only represents population of age 16 and above. The map above uses population of the whole nation, hence it has a much lower percentage. Still, we can see that vaccination rates a very different across regions. For example, only 58% of people in London are fully vaccinated. Even considering the population for people under the age of 16, this percentage is quite low. In comparison, the South East has a even higher local population but the percentage of population fully vaccinated is higher, 67.95%.
+
+## Conclusion
+From the graphs shown in the blog, we see that the efforts we've made the past two years have started to pay off. Although the virus has not gone away, we have adapted to live with it. With vaccines, we are able to prevent deaths from occurring. The next step is to push for higher vaccination uptake. With less people dying from the vaccine and building up immunity we might just be able to return to "normal" again. Just this time, the "normal" means co-existing with this virus.
 
