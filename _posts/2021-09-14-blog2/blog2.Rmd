@@ -36,10 +36,11 @@ library(leaflet)
 ```
 
 ## Introduction
-
+As we close to the end of second year living under the coronavirus pandemic, hopes of returning back to normal seems more and more like a dream because there seems to be no end in case numbers. Even with the roll-out of vaccines to fight against the virus, we can't seem to beat the speed at which the virus mutates into stronger variants. The United Kingdom is a country who has no shortage of COVID-19 vaccines.
+The government has mobilized its resources and secured doses to vaccinate its people quickly. This blog aims to explore the status of the country during the pandemic as well as the impacts of vaccination.
 
 ## Data Description
-Two data sets are used in this analysis.
+Three data sets are used in this analysis.[Coronavirus (Covid-19) in the UK](https://coronavirus.data.gov.uk/) is the main source for these data sets.
 
 ### COVID-19 Confirmed cases and Death
 ```{r cases}
@@ -93,18 +94,43 @@ northwest<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaTyp
 
 southeast<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000008&metric=cumPeopleVaccinatedCompleteByPublishDate&metric=cumPeopleVaccinatedFirstDoseByPublishDate&metric=cumPeopleVaccinatedSecondDoseByPublishDate&format=csv")
 
-southwest<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E1200000&metric=cumPeopleVaccinatedCompleteByPublishDate&metric=cumPeopleVaccinatedFirstDoseByPublishDate&metric=cumPeopleVaccinatedSecondDoseByPublishDate&format=csv")
+southwest<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000009&metric=cumPeopleVaccinatedCompleteByPublishDate&metric=cumPeopleVaccinatedFirstDoseByPublishDate&metric=cumPeopleVaccinatedSecondDoseByPublishDate&format=csv")
 
 westmidlands<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000005&metric=cumPeopleVaccinatedCompleteByPublishDate&metric=cumPeopleVaccinatedFirstDoseByPublishDate&metric=cumPeopleVaccinatedSecondDoseByPublishDate&format=csv")
 
 yorkshirehumber<- readr::read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=region&areaCode=E12000003&metric=cumPeopleVaccinatedCompleteByPublishDate&metric=cumPeopleVaccinatedFirstDoseByPublishDate&metric=cumPeopleVaccinatedSecondDoseByPublishDate&format=csv")
 
-vaccdf <- rbind(eastmidlands, eastofengland, london, northeast, northwest,southeast, southwest, westmidlands, yorkshirehumber)
+
+areaCode <- c('E12000001','E12000002','E12000003','E12000004','E12000005','E12000006','E12000007','E12000008','E12000009')
+pop <- c(2680763, 7367456,5526350,4865583,5961929,6269161,9002488,9217265,5695143)
+population <- as.data.frame(cbind(areaCode,pop))
+
+vaccdf <- rbind(eastmidlands, eastofengland, london, northeast, northwest,southeast, southwest, westmidlands, yorkshirehumber) %>% 
+  rename('Completely Vaccinated' = cumPeopleVaccinatedCompleteByPublishDate,
+         "First Dose" = cumPeopleVaccinatedFirstDoseByPublishDate,
+         "Second Dose" = cumPeopleVaccinatedSecondDoseByPublishDate)
+vaccdf <- vaccdf[order(match(vaccdf$areaCode,population$areaCode)),]
+
+
+vaccdf <- vaccdf %>% left_join(.,population, by = 'areaCode')
+vaccdf <- vaccdf%>% 
+  mutate(pop = as.numeric(pop),
+         firstperc = round(`First Dose`/pop*100, digits = 2),
+         secondperc = round(`Second Dose`/pop*100, digits = 2))
+
+read_excel(here::here("data","ukdict.xlsx"), sheet=3) %>%
+  kable(booktabs = TRUE)%>%
+  kable_styling(fixed_thead = T) %>% 
+  kable_paper("striped") %>%
+  row_spec(0, bold = T, color = "#f3ac50", background = "#2596be", align = "c") %>%
+  column_spec(2, italic = T)
 ```
 
 #### Data Limitations
 
 ## Data Exploration
+The analysis is completed using R Studio @rstudio. Packages used are `tidyverse` @R-tidyverse, `ggplot2` @R-ggplot2, `gganimate` @gganimate, `readxl` @readxl, `plotly` @R-plotly, `kableExtra` @kableExtra, `lubridate` @lubridate, and `leaflet` @leaflet.
+
 
 ### Vaccine helps!
 ```{r daily-update-of-covid}
@@ -144,62 +170,63 @@ vaccpop <- ukvacc_longer %>% ggplot(aes(x = date,
        colour ="Doses",
        x = "Date",
        y ="Percentage of population\nvaccinated(16yr+)")+ 
-  scale_x_date(date_labels = "%d %b",date_breaks = "2 week")+
+  scale_x_date(date_breaks = "1 month", date_minor_breaks = "1 week",
+             date_labels = "%B")+
   scale_y_continuous(breaks = seq(0,100, by=20),
                      labels = ~scales::percent(., scale = 1))+
   scale_fill_manual(values=c("#5F9EA0", "#E1B378"))+theme_minimal()+
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle=90,vjust = 0.5))
 
-vaccpop %>% ggplotly(dynamicTicks = TRUE,type="scattergl")%>%
-  rangeslider() %>% 
-  layout(hovermode ="x unified")
-
-
-
+vaccpop %>% ggplotly()%>%
+  #rangeslider() %>% 
+  layout(hovermode ="x unified",
+         legend = list(orientation = "h"))
 ```
 
-```{r map,}
-regions <- sf::st_read("RegionsBoundaries.geojson")
+### Vaccination in England(by Regions)
 
-vaccdf
+```{r map}
+regions <- sf::st_read(here::here("data","RegionsBoundaries.geojson"))
+
 # Creating a color palette based on the number range in the total column
-pal <- colorNumeric("Blues", domain=vaccdf$cumPeopleVaccinatedCompleteByPublishDate)
+pal <- colorBin("Blues", domain=vaccdf$`Completely Vaccinated`, bin = 4, pretty = FALSE)
 
 # Setting up the pop up text
-popup_sb <- paste0("Fully Vacc: ",
-                   vaccdf$cumPeopleVaccinatedCompleteByPublishDate)
+popup_sb <- paste0("Region: ",
+                   vaccdf$areaName,
+                   "<br>Fully Vacc: ",
+                   vaccdf$`Completely Vaccinated`,"</br>")
 
-simplifiedregions <-rmapshaper::ms_simplify(regions)
-leaflet(simplifiedregions) %>% 
-  addPolygons(stroke = TRUE, opacity =0.6,
-              fillOpacity = 0.5,
+#setting up the labels
+labels <- lapply(seq(nrow(vaccdf)), function(i) {
+  paste0( "Region: ",vaccdf[i, "areaName"], 
+          '<br>Region Population: ',vaccdf[i, 'pop'],
+          '</br>Fully Vacc: ',vaccdf[i, 'Completely Vaccinated'],
+          '<br>First Dose: ', vaccdf[i, "firstperc"],'%',
+          '</br>Second Dose: ', vaccdf[i, "secondperc"],'%') 
+})
+
+leaflet(regions) %>% 
+  addPolygons(opacity =1,
+              fillOpacity = 1,
               smoothFactor = 0.5,
               color = "black",
-              fillColor = ~pal(vaccdf$cumPeopleVaccinatedCompleteByPublishDate),
-              popup= ~popup_sb) %>% 
+              fillColor = ~pal(vaccdf$`Completely Vaccinated`),
+              weight =1,
+              popup = ~popup_sb,
+              popupOptions = popupOptions(direction ="auto",
+                                           autoPanPadding = c(1,1)),
+              label = ~lapply(labels, htmltools::HTML),
+              highlight = highlightOptions(
+                      fillOpacity =1,
+                      fillColor = "red",
+                      opacity = 1.0,
+                      bringToFront = TRUE,
+                      sendToBack = TRUE)) %>% 
   addLegend(pal = pal,
-            values = vaccdf$cumPeopleVaccinatedCompleteByPublishDate,
+            values = ~vaccdf$`Completely Vaccinated`,
             position = "bottomleft",
             title= "Fully Vaccinated Population")
-
-# addPolygons(data = states_merged_sb , 
-#               fillColor = ~pal(states_merged_sb$total), 
-#               fillOpacity = 0.7, 
-#               weight = 0.2, 
-#               smoothFactor = 0.2, 
-#               popup = ~popup_sb) %>%
-#   addLegend(pal = pal, 
-#             values = states_merged_sb$total, 
-#             position = "bottomright", 
-#             title = "Starbucks")
-# leaflet() %>%
-#   setView(lng = -1.47, lat = 52.3, zoom = 6) %>%
-#   addProviderTiles(providers$Esri.WorldGrayCanvas) %>%
-#   addPolygons(data = simplifiedregions,
-#               color = "blue",
-#               fillOpacity = 0,
-#               weight  = 1,
-#               popup = ~rgn17nm)
 ```
 
