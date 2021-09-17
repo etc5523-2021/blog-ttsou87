@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+  <channel>
+    <title>ttso0004</title>
+    <link>https://github.com/etc5523-2021/blog-ttsou87</link>
+    <atom:link href="https://github.com/etc5523-2021/blog-ttsou87/index.xml" rel="self" type="application/rss+xml"/>
+    <description>ttso0004
+</description>
+    <generator>Distill</generator>
+    <lastBuildDate>Tue, 14 Sep 2021 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>COVID-19 in the United Kingdom(England)</title>
+      <dc:creator>Tina Tsou</dc:creator>
+      <link>https://github.com/etc5523-2021/blog-ttsou87/posts/2021-09-14-blog2</link>
+      <description>This post contains simple overview of the COVID-19 statistics in United Kingdom and the vaccination statistics up till August, 2021.</description>
+      <category>Covid-19</category>
+      <category>Vaccination</category>
+      <guid>https://github.com/etc5523-2021/blog-ttsou87/posts/2021-09-14-blog2</guid>
+      <pubDate>Tue, 14 Sep 2021 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>COVID-19 Vaccination in Nigeria</title>
+      <dc:creator>Tina Tsou</dc:creator>
+      <link>https://github.com/etc5523-2021/blog-ttsou87/posts/2021-09-01-blog1</link>
+      <description>This post contains simple overview of the COVID-19 statistics in Nigeria and the vaccination statistics up till August, 2021.</description>
+      <category>Covid-19</category>
+      <category>Nigeria</category>
+      <category>Vaccination</category>
+      <guid>https://github.com/etc5523-2021/blog-ttsou87/posts/2021-09-01-blog1</guid>
+      <pubDate>Wed, 01 Sep 2021 00:00:00 +0000</pubDate>
+      <media:content url="https://github.com/etc5523-2021/blog-ttsou87/posts/2021-09-01-blog1/../../images/fusion-medical-animation-rnr8D3FNUNY-unsplash.jpg" medium="image" type="image/jpeg"/>
+    </item>
+  </channel>
+</rss>

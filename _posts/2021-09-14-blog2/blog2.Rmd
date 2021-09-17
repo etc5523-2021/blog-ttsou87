@@ -40,9 +40,12 @@ As we close to the end of second year living under the coronavirus pandemic, hop
 The government has mobilized its resources and secured doses to vaccinate its people quickly. This blog aims to explore the status of the country during the pandemic as well as the impacts of vaccination.
 
 ## Data Description
-Three data sets are used in this analysis.[Coronavirus (Covid-19) in the UK](https://coronavirus.data.gov.uk/) is the main source for these data sets.
+Three data sets are used in this analysis. [Coronavirus (Covid-19) in the UK](https://coronavirus.data.gov.uk/) is the main source for these data sets.
 
-### COVID-19 Confirmed cases and Death
+### `ukdaily`: COVID-19 Confirmed cases and Death
+
+The best way to understand the country's COVID-19 status is to look at the confirmed cases and deaths. Using data from [Coronavirus (Covid-19) in the UK](https://coronavirus.data.gov.uk/), I put together a data set called `ukdaily` that contains records of daily cases and deaths as well as the accumulated number of those variables. The data contains 5 variables and 594 observations. Below is a table of data description:
+
 ```{r cases}
 cases <- read.csv(here::here("data","cases-uk.csv"))%>%
   select(!c(areaType, areaName, areaCode))
@@ -63,7 +66,13 @@ read_excel(here::here("data","ukdict.xlsx"), sheet=1) %>%
 ```
 #### Data Limitations
 
-### Vaccination in the United Kingdom
+A limitation of this data set is that it doesn't include the total population of the country so we can't calculate the proportion of population that had confirm cases and died. This data is also not broken down to smaller regions like province or region nor does it contain the demographics of the confirmed case and death. Therefore, the kind of analysis that can be made from this data is limited.
+
+
+### `ukvacc`: Vaccination in the United Kingdom
+
+This data set contains the vaccine up take of United Kingdom in percentage since the first recorded publish date. It contains 3 variables and 249 observations.
+
 ```{r ukvaccinesuptake}
 ukvacc <- read.csv(here::here("data","uk-vacc-uptake.csv"))%>%
   select(!c(areaType, areaName, areaCode))
@@ -76,9 +85,14 @@ read_excel(here::here("data","ukdict.xlsx"), sheet=2) %>%
   row_spec(0, bold = T, color = "#f3ac50", background = "#2596be", align = "c") %>%
   column_spec(2, italic = T)
 ```
+
 #### Data Limitation
 
-### Vaccination in England(Regions)
+The `ukvacc` contains the accumulated percentage of vaccine uptake and nothing more. The low level of the data limits other analysis possibilities. 
+
+### `vaccdf`: Vaccination in England(Regions)
+
+This data set is combined from vaccination data of each province in England. Province data is not provided for Wales, Scotland, and Northern Ireland on coronavirus.data.gov.uk. I wrangled the data to include the population of each province in England. Population data the 2020 population found at on [statista](https://www.statista.com/statistics/294729/uk-population-by-region/)(@clark_2021). The population data is used to calculate the percentage of population that has vaccinated. The `vaccdf` data contains 9 observations of 10 variables. Below is a table of data description for it:
 
 ```{r df-vaccination-in-England}
 #import region data
@@ -127,12 +141,15 @@ read_excel(here::here("data","ukdict.xlsx"), sheet=3) %>%
 ```
 
 #### Data Limitations
+The data is aggregated data and doesn't include information on demographics which limits the more detailed analysis that can be made.
 
 ## Data Exploration
 The analysis is completed using R Studio @rstudio. Packages used are `tidyverse` @R-tidyverse, `ggplot2` @R-ggplot2, `gganimate` @gganimate, `readxl` @readxl, `plotly` @R-plotly, `kableExtra` @kableExtra, `lubridate` @lubridate, and `leaflet` @leaflet.
 
-
 ### Vaccine helps!
+
+Is there really no hope of returning life back to "normal"? Just looking at the sheer number of confirmed cases and the waves of spike in cases, "normal" seems like wishful thinking. However, when adding the number of deaths to th the plot, it is evident that number of of deaths has dropped drastically. 
+
 ```{r daily-update-of-covid}
 scatter <- ukdaily %>% 
   ggplot(aes(x= date, y = newCasesBySpecimenDate, 
@@ -153,6 +170,8 @@ animate(scatter.animate, fps = 30, duration = 10, end_pause = 60)
 anim_save("scatter.gif")
 
 ```
+
+From the figure above, we see the daily confirmed cases and death as the time progresses. In January 2021, where there was peak confirmed cases, the number of deaths was also highest, at over 1000 deaths.The United Kingdom also started rolling out vaccines in January of 2021. When there was another spike in cases in July 2021, although cases numbers went up to as high as 60,000, the number of deaths was less than 100. This is evidence that the vaccine helps prevent death caused by COVID-19. 
 
 ```{r}
 ukvacc_longer <- ukvacc %>% 
@@ -183,6 +202,8 @@ vaccpop %>% ggplotly()%>%
   layout(hovermode ="x unified",
          legend = list(orientation = "h"))
 ```
+
+Looking at the graph above, we see that vaccination uptake started to slow down in June and July. Corresponding to the 'Daily COVID-19 Cases and Deaths in the United Kingdom' graph, we can observe that the first few months when the vaccine was administered, cases were controlled. There may be other factors influencing the number of confirmed cases such as new variants but from the graphs above, vaccine  seems to play a part in successfully preventing deaths in patients.
 
 ### Vaccination in England(by Regions)
 
